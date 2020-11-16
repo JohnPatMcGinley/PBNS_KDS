@@ -8,11 +8,12 @@
 #ifndef BITONIC_SORT_SERIAL_H_
 #define BITONIC_SORT_SERIAL_H_
 
+#include "file_reader.h"
 
-void compAndSwap(int a[], int i, int j, int dir);
-void bitonicMerge(int a[], int low, int cnt, int dir);
-void bitonicSort(int a[], int low, int cnt, int dir);
-void bitonic_sort_seq(int a[], int N, int up);
+void compAndSwap(std::vector<Record> *record_vector, int i, int j, int dir);
+void bitonicMerge(std::vector<Record> *record_vector, int low, int cnt, int dir);
+void bitonicSort(std::vector<Record> *record_vector, int low, int cnt, int dir);
+void bitonic_sort_seq(std::vector<Record> *record_vector, int N, int up);
 
 
 #endif /* BITONIC_SORT_SERIAL_H_ */

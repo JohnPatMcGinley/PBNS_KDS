@@ -43,21 +43,23 @@
 //#define RMAX 1000000
 #define RMAX 100
 
-int thread_count;
+int thread_count = 4;
 //pthread_barrier_t barrier;
 int bar_count = 0;
 pthread_mutex_t bar_mutex;
 pthread_cond_t bar_cond;
 int size;
 int n;
+std::vector<Record> *llc_file_vector;
 int *list1, *list2;
 int *l_a, *l_b;
 
 int getNextPowerOf2(int size);
-void paddArray(int *array, int originalSize, int newSize);
+//void paddArray(std::vector<Record> *recordVector, int originalSize, int newSize);
+void paddArray(int originalSize, int newSize);
 void Usage(char *prog_name);
-void Get_args(int argc, char *argv[], int *gen_list_p, int *output_list_p);
-void Gen_list(int list[], int size, int newSize);
+void Get_args(int argc, char *argv[]);
+//void Gen_list(int list[], int size, int newSize);
 void Read_list(char prompt[], int list[], int n);
 void Print_list(char title[], int list[], int n);
 void* Bitonic_sort(void *rank);
@@ -67,7 +69,6 @@ void Bitonic_sort_decr(int th_count, int dim, int my_first, int local_n,
 		int my_rank);
 void Merge_split_lo(int my_rank, int my_first, int local_n, int partner);
 void Merge_split_hi(int my_rank, int my_first, int local_n, int partner);
-int Compare(const void *x_p, const void *y_p);
 void Barrier(void);
 
 /*--------------------------------------------------------------------*/
@@ -77,12 +78,19 @@ int main(int argc, char *argv[]) {
 	struct timeval start, end;
 	//int gen_list, output_list;
 
-	std::vector<Record> llc_file_vector = fileToVector("llc_fnl_202003.txt");
+	//Need to create tempvector because return from fileToVector goes out of scope
+	std::vector<Record> tempVector = fileToVector("llc_fnll_202003");
+	llc_file_vector = &tempVector;
 
+	printf("Done reading file...\n");
 	//Get_args(argc, argv, &gen_list, &output_list);
-	n = getNextPowerOf2(llc_file_vector.size());
-	printf("Input size: %d\n", llc_file_vector.size());
-	printf("Size with dummy records: %d\n", n);
+
+	int vecLength = llc_file_vector->size();
+
+	n = getNextPowerOf2(vecLength);
+
+	printf("Input size: %d\n", vecLength);
+	printf("Size with dummy records (after paddArray): %d\n", n);
 	printf("Number of threads: %d\n", thread_count);
 
 	thread_handles = (pthread_t*)malloc(thread_count * sizeof(pthread_t));
@@ -146,18 +154,20 @@ int getNextPowerOf2(int size) {
 	return newSize;
 }
 
-void paddArray(int *array, int originalSize, int newSize) {
+void paddArray(int originalSize, int newSize) {
 	srand(time(NULL));
-	for (int i = 0; i < originalSize; i++) {
+	Record r;
+	/*for (int i = 0; i < originalSize; i++) {
 		// Fill with random integers
 		//
-		array[i] = rand() % RMAX;
-	}
+		recordVector->at(i) = rand() % RMAX;
+	}*/
 
 	for (int i = originalSize; i < newSize; i++) {
 		// Pad with dummy records
 		//
-		array[i] = -1;
+		r = r.makeDummyRecord();
+		llc_file_vector->push_back(r);
 	}
 }
 
@@ -183,7 +193,7 @@ void Usage(char *prog_name) {
  * Out args:    gen_list_p, output_list_p
  * Out global:  n
  */
-void Get_args(int argc, char *argv[], int *gen_list_p, int *output_list_p) {
+void Get_args(int argc, char *argv[]) {
 	char c1;
 
 	if (argc < 3 || argc > 5)
@@ -194,6 +204,7 @@ void Get_args(int argc, char *argv[], int *gen_list_p, int *output_list_p) {
 		Usage(argv[0]);
 
 	// if (argc == 3)
+	/*
 	*gen_list_p = *output_list_p = 0;
 
 	if (argc == 4) {
@@ -205,7 +216,7 @@ void Get_args(int argc, char *argv[], int *gen_list_p, int *output_list_p) {
 	} else if (argc == 5) {
 		*gen_list_p = 1;
 		*output_list_p = 1;
-	}
+	}*/
 } /* Get_args */
 
 /*-------------------------------------------------------------------
@@ -215,6 +226,7 @@ void Get_args(int argc, char *argv[], int *gen_list_p, int *output_list_p) {
  * Out arg:   list
  * In global: RMAX
  */
+/*
 void Gen_list(int list[], int size, int newSize) {
 	paddArray(list, size, newSize);
 } /* Gen_list */
@@ -238,36 +250,11 @@ void Read_list(char prompt[], int list[], int n) {
  * Purpose:   Print a list of ints to stdout
  * In args:   list, n
  */
-void Print_list(char title[], int list[], int n) {
-	int i;
-
-	printf("%s:\n", title);
-	for (i = 0; i < n; i++)
-		printf("%d ", list[i]);
-	printf("\n");
+void Print_list() {
+	for (int i = 0; i < 50; i++) {
+		std:: cout << (llc_file_vector->at(i) + '\n');
+	}
 } /* Print_list */
-
-/*-----------------------------------------------------------------
- * Function:     Compare
- * Purpose:      Compare two ints and determine their relative sizes
- * In args:      x_p, y_p
- * Ret val:      -1 if *x_p < *y_p
- *                0 if *x_p == *y_p
- *               +1 if *x_p > *y_p
- * Note:         For use by qsort library function
- */
-int Compare(const void *x_p, const void *y_p) {
-	int x = *((int*) x_p);
-	int y = *((int*) y_p);
-
-	if (x < y)
-		return -1;
-	else if (x == y)
-		return 0;
-	else
-		/* x > y */
-		return 1;
-} /* Compare */
 
 /*-------------------------------------------------------------------
  * Function:        Bitonic_sort
@@ -289,7 +276,7 @@ void* Bitonic_sort(void *rank) {
 	/* Sort my sublist */
 	//qsort(list1 + my_first, local_n, sizeof(int), Compare);
 
-	bitonic_sort_seq(list1 + my_first, local_n, 1);
+	bitonic_sort_seq(llc_file_vector + my_first, local_n, 1);
 
 	Barrier();
 #  ifdef DEBUG
