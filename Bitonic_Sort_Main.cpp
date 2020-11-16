@@ -61,7 +61,7 @@ void Usage(char *prog_name);
 void Get_args(int argc, char *argv[]);
 //void Gen_list(int list[], int size, int newSize);
 void Read_list(char prompt[], int list[], int n);
-void Print_list(char title[], int list[], int n);
+void Print_list();
 void* Bitonic_sort(void *rank);
 void Bitonic_sort_incr(int th_count, int dim, int my_first, int local_n,
 		int my_rank);
@@ -252,7 +252,7 @@ void Read_list(char prompt[], int list[], int n) {
  */
 void Print_list() {
 	for (int i = 0; i < 50; i++) {
-		std:: cout << (llc_file_vector->at(i) + '\n');
+		std:: cout << llc_file_vector->at(i) << '\n';
 	}
 } /* Print_list */
 
