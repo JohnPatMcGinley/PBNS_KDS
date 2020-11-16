@@ -24,7 +24,7 @@ struct Record
 	double dRate;
 	int dFICO;
 	int dTerm;
-    double dSATO;
+        double dSATO;
 	double dLoan;
 	std::string dSchPmt;
 	std::string dLTV;
