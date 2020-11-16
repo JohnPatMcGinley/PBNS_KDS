@@ -68,6 +68,57 @@ struct Record
 	std::string bDEQ;
 	std::string bLSS;
 
+	Record makeDummyRecord() {
+		Record r;
+		r.dAgency = "--";
+		r.dOrigMo = 0;
+		r.dPerfMo = 0;
+		r.dTime = 0.00;
+		r.dRate = 0.00;
+		r.dFICO = 100;
+		r.dTerm = 0;
+		r.dSATO = 0.00;
+		r.dLoan = 0.00;
+		r.dSchPmt = 0.00;
+		r.dLTV = 0.00;
+		r.dDTI = "--";
+		r.dDiffRate = 0.00;
+		r.dProdType = "--";
+		r.dPurpose = "--";
+		r.dChannel = "--";
+		r.dCombLTV = "--";
+		r.dDocument = "--";
+		r.dPropType = "--";
+		r.dUnitNo = "--";
+		r.dOccupancy = "--";
+		r.dLoanType = "--";
+		r.dState = "--";
+		r.dSeason = "--";
+		r.dAppValue = "--";
+		r.dSalePrice = "--";
+		r.dServicer = "--";
+		r.dSeller = "--";
+		r.dNBorrower = "--";
+		r.d1stBuyer = "--";
+		r.dMInsPct = "--";
+		r.dCLTV = "--";
+		r.dCCombLTV = "--";
+		r.dEIT = "--";
+		r.yACT = "--";
+		r.yCRR = "--";
+		r.yCDR = "--";
+		r.yCPR = "--";
+		r.yCBR = "--";
+		r.yDEQ = "--";
+		r.ySCH = "--";
+		r.bBAL = "--";
+		r.bCRR = "--";
+		r.bCDR = "--";
+		r.bCPR = "--";
+
+		return r;
+	}
+
 	void readInput(std::istream& in, int Record::*var) {
 		std::string input;
 		std::getline(in, input, '|');
@@ -84,6 +135,13 @@ struct Record
 		std::getline(in, this->*var, '|');
 	}
 };
+
+int inline operator>(Record& r1, Record& r2) {
+	if (r1.dLoan> r2.dLoan) {
+		return 1;
+	}
+	return 0;
+}
 
 inline std::istream& operator>>(std::istream& is, Record& r) {
 	// doing loan first assuming we are sorting by loan, if not we can swap loan with
