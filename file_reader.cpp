@@ -4,7 +4,6 @@
 using namespace std;
 
 
-
 // read file into an array for future manip/sorting
 vector<Record> fileToVector(string fileName) {
 	cout << "In file reader\n";
@@ -13,29 +12,22 @@ vector<Record> fileToVector(string fileName) {
         cerr << "unable to open file";
         exit(1);
     }
-    //return vector containing strings representing each line of llc_fnl file
+    //return vector of record objects that represent each line
     vector<Record> records;
-    
-    /*I removed this because due to large RAM it's not really needed, can change implementation if issue
-    constexpr size_t bufferSize = 1024 * 1024;
-    unique_ptr<char[]> buffer(new char[bufferSize]);
-     *
-     */
     Record r;
-    while (inputFile >> r)
+    string line;
+
+    while (getline(inputFile, line))
     {
-        //try to take each line and push it into the vector for
-        //easier manipulation in the future
+    	istringstream ss(line);
+    	ss >> r;
 
     	records.push_back(r);
     }
 
     cout << "outputVector size is: " << records.size() << endl;
-    cout << "First entry is: " << records.at(0)<< endl;
-/*
-    for (int i = 0; i < 25; i++) {
-    	cout  >> outputVector.at(i);
-    }*/
+    //this entry is used as an example because it has a blank field, handles error cases.
+    cout << "Entry : " << records.at(189654)<< endl;
 
     return records;
 }
