@@ -60,7 +60,7 @@ void paddArray(int originalSize, int newSize);
 void Usage(char *prog_name);
 void Get_args(int argc, char *argv[]);
 //void Gen_list(int list[], int size, int newSize);
-void Read_list(char prompt[], int list[], int n);
+//void Read_list(char prompt[], int list[], int n);
 void Print_list();
 void* Bitonic_sort(void *rank);
 void Bitonic_sort_incr(int th_count, int dim, int my_first, int local_n,
@@ -116,9 +116,11 @@ int main(int argc, char *argv[]) {
 	for (thread = 0; thread < thread_count; thread++)
 		pthread_create(&thread_handles[thread], NULL, Bitonic_sort,
 				(void*) thread);
-
+	printf("BEFORE PTHREAD_JOIN ------\n");
 	for (thread = 0; thread < thread_count; thread++)
 		pthread_join(thread_handles[thread], NULL);
+
+	printf("AFTER PTHREAD_JOIHN ------\n");
 
 	// get time
 	//
@@ -136,6 +138,8 @@ int main(int argc, char *argv[]) {
 	pthread_mutex_destroy(&bar_mutex);
 	pthread_cond_destroy(&bar_cond);
 	free(thread_handles);
+	printf("before print list");
+	Print_list();
 	return 0;
 } /* main */
 
@@ -236,7 +240,7 @@ void Gen_list(int list[], int size, int newSize) {
  * Purpose:   Get a list of ints from stdin
  * In arg:    n
  * Out arg:   list
- */
+ *//*
 void Read_list(char prompt[], int list[], int n) {
 	int i;
 
@@ -280,7 +284,7 @@ void* Bitonic_sort(void *rank) {
 
 	Barrier();
 #  ifdef DEBUG
-   if (my_rank == 0) Print_list("List after sort", list1, n);
+   //if (my_rank == 0) Print_list("List after sort", list1, n);
 #  endif
 	for (th_count = 2, and_bit = 2, dim = 1; th_count <= thread_count;
 			th_count <<= 1, and_bit <<= 1, dim++) {
