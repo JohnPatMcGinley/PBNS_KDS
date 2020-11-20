@@ -9,7 +9,7 @@ vector<Record> fileToVector(string fileName) {
 	cout << "In file reader\n";
     ifstream inputFile(fileName);
     if (!inputFile) {
-        cerr << "unable to open file";
+        cerr << "unable to open file\n";
         exit(1);
     }
     //return vector of record objects that represent each line

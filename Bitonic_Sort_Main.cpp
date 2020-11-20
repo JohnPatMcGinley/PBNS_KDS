@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 	struct timeval start, end;
 	//int gen_list, output_list;
 
-	std::vector<Record> llc_file_vector = fileToVector("llc_fnl_202003.txt");
+	std::vector<Record> llc_file_vector = fileToVector("llc_fnll_202003");
 
 	//Get_args(argc, argv, &gen_list, &output_list);
 	n = getNextPowerOf2(llc_file_vector.size());
