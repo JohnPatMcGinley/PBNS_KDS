@@ -136,11 +136,8 @@ struct Record
 	}
 };
 
-int inline operator>(Record& r1, Record& r2) {
-	if (r1.dLoan> r2.dLoan) {
-		return 1;
-	}
-	return 0;
+bool inline operator>(Record& r1, Record& r2) {
+	return r1.dLoan > r2.dLoan;
 }
 
 inline std::istream& operator>>(std::istream& is, Record& r) {
