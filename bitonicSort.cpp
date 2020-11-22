@@ -1,6 +1,14 @@
-// richu shaji abraham richursa
+/*********************************************
+ * PBNS - OpenMP version
+ * Original OpenMP implementation from https://github.com/richursa/cpuBitonicSort
+ * Author: richu shaji abraham richursa
+ *
+ * PBNS modified to sort KDS raw data
+ * Authors: John M., Nicholas B., Coby F.
+ *
+ *********************************************/
 
-#include<iostream>                                                                              //for std::cout ,std::cin
+#include<iostream>
 #include<omp.h>
 #include <sys/time.h>
 #include <vector>
@@ -214,7 +222,7 @@ int main() 													//main driver function
 {   
 	struct timeval start, end; 								//Timers
     omp_set_dynamic(0); 									//disabled so that the os doesnt override the thread settings
-    int maxNumberOfThreads = 4;//omp_get_num_procs(); 			//gives number of logical cores
+    int maxNumberOfThreads = omp_get_num_procs(); 			//gives number of logical cores
     omp_set_num_threads(maxNumberOfThreads); 				//set the no of threads
 
     // start timer
@@ -275,3 +283,4 @@ int main() 													//main driver function
 					+ (double) (end.tv_usec - start.tv_usec) / 1000000);
 
 }
+
