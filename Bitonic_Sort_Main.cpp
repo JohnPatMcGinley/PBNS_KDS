@@ -43,7 +43,7 @@
 //#define RMAX 1000000
 #define RMAX 100
 
-int thread_count;
+int thread_count = 2;
 //pthread_barrier_t barrier;
 int bar_count = 0;
 pthread_mutex_t bar_mutex;
@@ -78,6 +78,9 @@ int main(int argc, char *argv[]) {
 	//int gen_list, output_list;
 
 	std::vector<Record> llc_file_vector = fileToVector("llc_fnll_202003");
+	for(int i = 0; i < 20; i++){
+		printf("Record %i | Loan Number %i | DiffRate %f | FICO %i | LTV %f |\n",i, llc_file_vector.at(i).dLoan, llc_file_vector.at(i).dDiffRate, llc_file_vector.at(i).dFICO, llc_file_vector.at(i).dLTV);
+	}
 
 	//Get_args(argc, argv, &gen_list, &output_list);
 	n = getNextPowerOf2(llc_file_vector.size());
