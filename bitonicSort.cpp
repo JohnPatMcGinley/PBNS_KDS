@@ -174,7 +174,6 @@ int getNextPowerOf2(int size) {
 	unsigned count = 0;
 	int newSize = size;
 	if (size && !(size & (size - 1))) {
-		printf("Input is a power of 2: %d", size);
 		return size;
 	}
 	while (size != 0) {
@@ -218,18 +217,36 @@ void Gen_list(int list[], int size, int newSize) {
 	paddArray(list, size, newSize);
 }
 
-int main() 													//main driver function
+int main(int argc, char** argv)								//main driver function
 {   
 	struct timeval start, end; 								//Timers
     omp_set_dynamic(0); 									//disabled so that the os doesnt override the thread settings
     int maxNumberOfThreads = omp_get_num_procs(); 			//gives number of logical cores
-    omp_set_num_threads(maxNumberOfThreads); 				//set the no of threads
+
+    // Parse command line arguments: argv[1]=numThreads argv[2]=fileName
+    // example usage: ./Bitonic-Sort-OpenMP 8 llc_fnll_202003
+    //
+    if(argc < 3){
+    	cout << "Error: correct usage is ./Bitonic-Sort-OpenMP numThreads fileName" << endl;
+    	exit(0);
+    }
+    int numThreads = stoi(argv[1]);
+    string fileName = argv[2];
+
+    // Make sure 1 <= numThreads <= maxNumberOfThreads and is divisible by 2
+    //
+    if (numThreads > maxNumberOfThreads || numThreads < 1 || getNextPowerOf2(numThreads) != numThreads){
+    	cout << "Defaulting to max threads:" << maxNumberOfThreads << endl;
+    	numThreads = maxNumberOfThreads;
+    }
+
+	omp_set_num_threads(numThreads);
 
     // start timer
     //
     gettimeofday(&start, NULL);
 
-	vector<Record> tempVector = fileToVector("llc_fnll_202003");
+	vector<Record> tempVector = fileToVector(fileName);
 	// get time
 	//
 	gettimeofday(&end, NULL);
@@ -245,8 +262,8 @@ int main() 													//main driver function
 
 	printf("Done reading file...\n");
     printf("Input size: %d\n", originalSize);
-    printf("Size with dummy records: %d\n", llc_file_vector->size());
-    printf("Number of threads: %d\n", maxNumberOfThreads);
+    printf("Size with dummy records: %d\n", (int)llc_file_vector->size());
+    printf("Number of threads: %d\n", numThreads);
     // start timer
     //
     gettimeofday(&start, NULL);
@@ -269,7 +286,7 @@ int main() 													//main driver function
 	ofstream myfile;
 	myfile.open ("sorted-records.txt");
 
-    for(int i = 0;i < llc_file_vector->size();i++)
+    for(int i = 0;i < (int)llc_file_vector->size();i++)
     {
         myfile << llc_file_vector->at(i) << endl;
     }
