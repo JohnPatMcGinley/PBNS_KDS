@@ -7,3 +7,6 @@ g++ -O3 Bitonic_Sort_Main.cpp -lpthread Bitonic_Sort_Serial.cpp file_reader.cpp 
 
 # OpenMP version Compilation with g++
 g++ -O3 bitonicSort.cpp -fopenmp Bitonic_Sort_Serial.cpp file_reader.cpp -o Bitonic-Sort
+
+# Usage
+./Bitonic-Sort-OpenMP numThreads fileName
